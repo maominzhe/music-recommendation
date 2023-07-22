@@ -16,7 +16,7 @@ class RunBuilder():
 
         runs = []
 
-        for ele in product(*params.value()):
+        for ele in product(*params.values()):
             runs.append(Run(*ele))
         
         return runs
@@ -78,41 +78,91 @@ class RunManager():
         self.test_epoch_loss = 0
         self.test_epoch_correct_num = 0
 
+    # def end_epoch(self):
+    #     epoch_duration = time.time() - self.epoch_start_time
+    #     run_duration = time.time() - self.run_start_time
+
+    #     loss = self.epoch_loss / len(self.loader.dataset)
+
+    #     accuracy = self.epoch_correct_num / len(self.loader.dataset)
+
+    #     print(f'accuracy: {self.epoch_correct_num} / {len(self.loader.dataset)}')
+
+    #     test_loss = self.test_epoch_loss / len(self.test_loader.dataset)
+    #     test_accuracy = self.test_epoch_correct_num / len(self.test_loader.dataset)
+
+    #     # visualize loss on tb
+    #     self.tb.add_scalars(
+    #         'Loss', {
+    #             'train_loss': loss,
+    #             'test_loss': test_loss
+    #         }, self.epoch_count
+    #     )
+
+    #     # visualize accuracy on tb
+    #     self.tb.add_custom_scalars(
+    #         'Accuracy', {
+    #             'train_accuracy': accuracy,
+    #             'test_accuracy': test_accuracy
+    #         },self.epoch_count
+    #     )
+
+    #     for name, param in self.network.named_parameters():
+    #         self.tb.add_histogram(name, param, self.epoch_count)
+    #         self.tb.add_histogram(f'{name}.grad', param.grad, self.epoch_count)
+
+    #     results = OrderedDict()
+        
+    #     results['run'] = self.run_count
+    #     results['epoch'] = self.epoch_count
+    #     results['loss'] = loss
+    #     results['accuracy'] = accuracy
+    #     results['epoch duration'] = epoch_duration
+    #     results['run duration'] = run_duration
+
+    #     for k,v in self.run_params._asdict().items():
+    #         results[k] = v
+
+    #     self.run_data.append(results)
+
+    #     df = pd.DataFrame.from_dict(self.run_data, orient='columns')
+
+    #     clear_output(wait=True)
+    #     display(df)
     def end_epoch(self):
         epoch_duration = time.time() - self.epoch_start_time
         run_duration = time.time() - self.run_start_time
 
+        # 训练集损失值
         loss = self.epoch_loss / len(self.loader.dataset)
-
+        # 测试集准确率
         accuracy = self.epoch_correct_num / len(self.loader.dataset)
-
-        print(f'accuracy: {self.epoch_correct_num} / {len(self.loader.dataset)}')
-
+        print(f'正确率：{self.epoch_correct_num} / {len(self.loader.dataset)}')
+        
+        # 测试集 test
+        # print(f"{self.test_epoch_correct_num}+{len(self.test_loader.dataset)}")
         test_loss = self.test_epoch_loss / len(self.test_loader.dataset)
         test_accuracy = self.test_epoch_correct_num / len(self.test_loader.dataset)
-
-        # visualize loss on tb
-        self.tb.add_scalars(
-            'Loss', {
-                'train_loss': loss,
-                'test_loss': test_loss
-            }, self.epoch_count
-        )
-
-        # visualize accuracy on tb
-        self.tb.add_custom_scalars(
-            'Accuracy', {
-                'train_accuracy': accuracy,
-                'test_accuracy': test_accuracy
-            },self.epoch_count
-        )
-
+        
+        # 加入损失函数图像
+        self.tb.add_scalars('Loss', {"train_loss": loss, 
+                                    "test_loss": test_loss}, self.epoch_count)
+        # 加入准确度函数图像
+        self.tb.add_scalars('Accuracy', {"train_accuracy": accuracy, 
+                                        "test_accuracy": test_accuracy}, self.epoch_count)
+        
+        # self.tb.add_scalar('Test_Loss', test_loss, self.epoch_count)
+        
+        #self.tb.add_scalar('Test_Accuracy', test_accuracy, self.epoch_count)
+        
         for name, param in self.network.named_parameters():
+            # 神经网络每一层的值
             self.tb.add_histogram(name, param, self.epoch_count)
+            # 每一层值所对应的梯度
             self.tb.add_histogram(f'{name}.grad', param.grad, self.epoch_count)
 
         results = OrderedDict()
-        
+
         results['run'] = self.run_count
         results['epoch'] = self.epoch_count
         results['loss'] = loss
@@ -120,16 +170,15 @@ class RunManager():
         results['epoch duration'] = epoch_duration
         results['run duration'] = run_duration
 
-        for k,v in self.run_params._asdict().items():
+        for k, v in self.run_params._asdict().items():
             results[k] = v
 
         self.run_data.append(results)
 
         df = pd.DataFrame.from_dict(self.run_data, orient='columns')
 
-        clear_output(wait=True)
+        clear_output(wait = True)
         display(df)
-
     # 作业核心数
     def get_num_workers(self,num_workers):
         self.epoch_num_workers = num_workers
