@@ -56,3 +56,8 @@ model/input/
 
 # venv
 venv/
+
+#data and model
+*.pth
+*.csv
+*.json

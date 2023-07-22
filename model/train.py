@@ -1,5 +1,4 @@
 # import libraries
-#%%
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -25,7 +24,6 @@ from utils.dataset import GTZANDataset
 from utils.manage import RunBuilder, RunManager
 from model import AlexNet
 
-#%%
 # global para
 torch.set_printoptions(linewidth=120)
 ANNOTATIONS_FILE = 'input/GTZAN/features_30_sec.csv'
@@ -36,11 +34,11 @@ AUDIO_DIR = 'input/GTZAN/genres_original'
 SAMPLE_RATE = 22050
 NUM_SAMPLES = 22050 * 5 
 plot = False
-#%%
+
 # Data preprocessing
 dataframe = pd.read_csv(ANNOTATIONS_FILE)
 dataframe.info()
-# %%
+
 # numerize label 
 labels = set()
 for row in range(len(dataframe)):
@@ -57,7 +55,6 @@ dataframe["num_label"] = dataframe["label"]
 new_dataframe = dataframe.replace({"num_label": mapping})
 error_row = new_dataframe[new_dataframe['filename'] == 'jazz.00054.wav'].index
 new_dataframe.drop(error_row, inplace=True)
-# %%
 # split dataset into training and testing [7:3]
 df = new_dataframe
 df['split'] = np.random.randn(df.shape[0], 1)
@@ -66,16 +63,16 @@ msk = np.random.rand(len(df)) <= 0.7
 
 train = df[msk]
 test = df[~msk]
-# %%
+
 # save training and testing annotation files
 train.to_csv("input/GTZAN/features_30_sec_train.csv")
 test.to_csv("input/GTZAN/features_30_sec_test.csv")
-# %%
+
+
 train_df = pd.read_csv(ANNOTATIONS_FILE_TRAIN)
 test_df = pd.read_csv(ANNOTATIONS_FILE_TEST)
 train_df.info()
 test_df.info()
-# %%
 if torch.cuda.is_available():
     device = 'cuda'
 else:
@@ -113,7 +110,8 @@ else:
     alex =  AlexNet().to('cpu')
 
 summary(alex, (1,64,216))
-# %%
+
+
 torch.manual_seed(128)
 params = OrderedDict(
     lr = [.001, .0001],
@@ -121,7 +119,7 @@ params = OrderedDict(
     num_workers = [0],
     device = ['cuda']
 )
-# %%
+
 m = RunManager()
 
 for  run in RunBuilder.get_runs(params):
@@ -197,6 +195,3 @@ for  run in RunBuilder.get_runs(params):
     torch.save(network.state_dict(), f'best_model_okk.pth')
     m.end_run()
     m.save(f'{run.lr}_{run.batch_size}')
-
-
-# %%

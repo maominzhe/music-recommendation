@@ -35,14 +35,33 @@ class GTZANDataset(Dataset):
         return len(self.annotations)
 
     
-    # 数组的方式可获得音频的数据、标签、路径
+    # # 数组的方式可获得音频的数据、标签、路径
+    # def __getitem__(self, index):
+    #     # 获得歌曲路径
+    #     audio_sample_path = self._get_audio_sample_path(index)
+    #     # 获得标签
+    #     label = self._get_audio_sample_label(index)
+    #     #label = torch.type(torch.LongTensor)
+    #     #label = torch.
+    #     # signal 采样信号 sr 采样频率
+    #     signal, sr = torchaudio.load(audio_sample_path)
+    #     signal = signal.to(self.device)
+    #     # 控制采样频率
+    #     signal = self._resample_if_necessary(signal, sr)
+    #     # 双通道->单通道
+    #     signal = self._mix_down_if_necessary(signal)
+    #     # 控制采样数量
+    #     signal = self._cut_if_necessary(signal)
+    #     signal = self._right_pad_if_necessary(signal)
+    #     # 转化下mel频谱
+    #     signal = self.transformation(signal)
+    #     return signal, label, audio_sample_path
+
     def __getitem__(self, index):
         # 获得歌曲路径
         audio_sample_path = self._get_audio_sample_path(index)
         # 获得标签
         label = self._get_audio_sample_label(index)
-        #label = torch.type(torch.LongTensor)
-        #label = torch.
         # signal 采样信号 sr 采样频率
         signal, sr = torchaudio.load(audio_sample_path)
         signal = signal.to(self.device)
@@ -56,8 +75,7 @@ class GTZANDataset(Dataset):
         # 转化下mel频谱
         signal = self.transformation(signal)
         return signal, label, audio_sample_path
-
-    
+        
     # 是否需要对信号裁剪： 如果采数量 > 设定的数量 -> 裁剪
     def _cut_if_necessary(self, signal):
         # print('_cut_if_necessary')
@@ -108,7 +126,7 @@ class GTZANDataset(Dataset):
         #print(f"fold: {fold}")
         path = os.path.join(self.audio_dir, fold, str(self.annotations.iloc[
             index, 1]))
-        print(path)
+        #print(path)
         return path
     
     
