@@ -8,7 +8,7 @@ This project aims to serve as a full-cycle web application that enable users to 
 
 
 
-## This repository contains:
+## This repository contains
 - ./ model: scripts train and test datasets for [GTZAN](https://www.kaggle.com/datasets/andradaolteanu/gtzan-dataset-music-genre-classification)
 ![overview](.img/train.png)
 Here is the workflow of the training process. The raw data needs to be preprocess with the same sample rate and sample number. Then it is converted to spectrum representation using mel transformation or mfcc. The CNN model here is a simple AlexNet serves to capture the essence of the input data. 
@@ -20,11 +20,12 @@ Here is the workflow of the training process. The raw data needs to be preproces
 
 ## How to train
 download the dataset as well as the annocation files and unzip them into './model/input/'
+
 to install dependencies
 
-'''
+```
 pip install -r requirements.txt
-'''
+```
 
 to start training:
 ```
