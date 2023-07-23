@@ -6,23 +6,23 @@ import torchaudio
 from model import AlexNet
 
 
-# X输入mel频谱的张量，y实际的标签下标，class_mapping 标签字典
+# x tensor of input mel spectrum, y actual label subscripts, class_mapping label dictionary
 def predict(model, X, y, class_mapping):
     model.eval()    # train <-> eval: changes how model behave (e.g. no dropout, ...)
     with torch.no_grad():
         predictions = model(X)
         # tensor (1, 10) -> [ [0.1, 0.04, ..., 0.6] ]
-        # 取出输出最大的下标
+        # Take out the largest subscript of the output
         predicted_index = predictions[0].argmax(0)
-        # 读出预测标签
+        # Read predictive labeling
         predicted = class_mapping[predicted_index]
-        # 实际的标签
+        # Actual labeling 
         expected = class_mapping[y]
         
     return predicted, expected
 
 
-# 测试下测试集上的精度
+# Testing Accuracy on Test Sets
 def verify_acc(model_path, sample_rate, gtzan,device):
 
     class_mapping = [
