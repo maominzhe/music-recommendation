@@ -39,7 +39,7 @@ mel_spectrogram = torchaudio.transforms.MelSpectrogram(
 
 # load dataset
 gtzan = GTZANDataset(
-    ANNOTATIONS_FILE_TRAIN,
+    ANNOTATIONS_FILE_TEST,
     AUDIO_DIR,
     mel_spectrogram,
     SAMPLE_RATE,
